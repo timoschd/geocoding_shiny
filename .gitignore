@@ -1,0 +1,12 @@
+secrets/
+*cache*/
+.Rproj.user
+.RDataTmp
+.RData
+*.RDS
+*.csv
+*.tsv
+*.json
+*.xml
+*.xlsx
+.DS_Store
