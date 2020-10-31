@@ -32,16 +32,12 @@ ui <- dashboardPage(
     
     body= dashboardBody(
         shinyDashboardThemes(theme = "blue_gradient"),
-        fluidPage(
-            
-            
-        # Application title
+        # app title 
         titlePanel("Get longitude & latitude for an address list"),
-        
-        # Sidebar with a slider input for number of bins 
-        sidebarLayout(
-          #  sidebarPanel(
-               box(
+        fluidRow(
+           column(width=4,
+           # box w/ description and upload inputs
+             box(
                    title="Upload your address list as CSV or Excel file and recieve the corresponding geocodes.",
                    "After uploading your file, specify the columns that contain the address.", br(), 
                    "Either ZIP or City is a mandatory column as well as country. If all your addresses are from one country, you can choose a country from the dopdown menu.",
@@ -51,10 +47,11 @@ ui <- dashboardPage(
                        label= "Upload file",
                        multiple = FALSE,
                        accept = c(".csv", ".xlsx"),
-                       width = '30%',
+                       width = '40%',
                        buttonLabel = "Browse...",
                        placeholder = "No file selected"
                    ),
+                   
                    # check if file has header
                    checkboxInput("header", "Header", TRUE),
                    
@@ -66,15 +63,22 @@ ui <- dashboardPage(
                                             Pipe = "|"),
                                 selected = ","),
                  ),
-               
-               mainPanel(
-                   
-                   tableOutput("preview")
-               )
+        
+            box("faefeaf")
+           ),
+            
+        
+        column(width = 8,
+            tableOutput("preview")
             )
-        ) 
+        )
+      
     )
-)
+)               
+        
+         
+
+
     
     
 # Define server logic required to draw a histogram
