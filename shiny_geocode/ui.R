@@ -82,7 +82,8 @@ ui <- dashboardPage(
         
         
         column(width = 8,
-               tableOutput("preview")
+               tableOutput("preview"),
+               tableOutput("test")
                
         )
     )

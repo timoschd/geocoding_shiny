@@ -88,8 +88,8 @@ server <- function(input, output) {
         actionButton("start", "Start geocoding", style= "background-color: #00ffd5")
     })
     
-    # on button click check consistency, else consitent: make adress column readable by google geocode api
-    check_df_message <- eventReactive(input$start, {
+    # on button click check consistency
+    check_df_message <- eventReactive(eventExpr = input$start, label="button_observer", valueExpr = {
         req(data_file())
         if (input$zip == " " & input$city == " "){
             "<span style=\"color:red\">Error: City or ZIP column required</span>"
@@ -110,7 +110,7 @@ server <- function(input, output) {
             "<span style=\"color:red\">Error: Country column not in character format</span>"
         }
         else {
-            return(paste("<span style=\"color:green\">Geocoding started</span>"))
+            "<span style=\"color:green\">Geocoding started</span>"
         }
         
     })
@@ -119,5 +119,37 @@ server <- function(input, output) {
     output$df_message<- renderText({
         req(check_df_message())
         return(check_df_message())
+    })
+    
+    # if consistent, make complete adress column and geocode it
+    geocoded_data<- eventReactive(input$start, {
+        req(check_df_message())
+        if (check_df_message() == "<span style=\"color:green\">Geocoding started</span>"){
+            data_file() %>%
+                #mutate(" "= "") %>% 
+                mutate(complete_address = paste0(
+                   (if(input$address != " "){
+                        paste0(!!sym(input$address), ", " )
+                    }),
+                   (if(input$zip != " "){
+                       paste0(!!sym(input$zip), " ") 
+                   }),
+                   (if(input$city != " "){
+                       !!sym(input$city)
+                   }), ",",
+                   (if(input$country != " "){
+                       paste0(" ", !!sym(input$country)) 
+                   }),
+                   (if(input$country_list != " "){
+                       paste0(" ", input$country_list) 
+                   })
+                   
+                ))
+        }
+    })
+    # test pasted column
+    output$test<- renderTable({
+        req(geocoded_data())
+        return(head(geocoded_data()))
     })
 }
