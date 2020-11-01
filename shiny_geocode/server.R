@@ -4,6 +4,7 @@ library("tidyverse")
 library("readxl")
 library("rworldmap")
 
+
 # load country list once
 data("countryExData")
 countries<- countryExData[, 2]
@@ -81,22 +82,42 @@ server <- function(input, output) {
                     selected = " ", selectize = TRUE, multiple= FALSE)
     })
     
-    # render start buttom
+    # render start button
     output$start_button <- renderUI({
         req(data_file())
-        actionButton("start", "Start geocoding")
+        actionButton("start", "Start geocoding", style= "background-color: #00ffd5")
     })
     
-    # on button click make adress column readable by google geocode api
-    adress_df <- eventReactive(input$start, {
+    # on button click check consistency, else consitent: make adress column readable by google geocode api
+    check_df_message <- eventReactive(input$start, {
         req(data_file())
-        data_file() %>% 
-              mutate(complete_address = paste0(!!sym(input$address), ", ", !!sym(input$zip), " ", !!sym(input$city), ", ", !!sym(input$country)))
+        if (input$zip == " " & input$city == " "){
+            "<span style=\"color:red\">Error: City or ZIP column required</span>"
+        }
+        else if (input$country == " " & input$country_list == " "){
+            "<span style=\"color:red\">Error: Country column or country from list required</span>"
+        }
+        else if (input$address != " " & !is.character(data_file()[[input$address]])) {
+            "<span style=\"color:red\">Error: Street column not in character format</span>"
+        }
+        else if (input$zip != " " & !is.character(data_file()[[input$zip]])) {
+            "<span style=\"color:red\">Error: ZIP column not in character format</span>"
+        }
+        else if (input$city != " " & !is.character(data_file()[[input$city]])) {
+            "<span style=\"color:red\">Error: City column not in character format</span>"
+        }
+        else if (input$country != " " & !is.character(data_file()[[input$country]])) {
+            "<span style=\"color:red\">Error: Country column not in character format</span>"
+        }
+        else {
+            return(paste("<span style=\"color:green\">Geocoding started</span>"))
+        }
+        
     })
     
-    # test output
-    output$test<- renderTable({
-        req(adress_df())
-        return(head(adress_df(),10))
+    # Error message output
+    output$df_message<- renderText({
+        req(check_df_message())
+        return(check_df_message())
     })
 }

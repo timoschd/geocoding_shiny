@@ -73,7 +73,8 @@ ui <- dashboardPage(
                box(
                    width = '100%',
                    title= "3. Geocode",
-                   uiOutput("start_button")
+                   uiOutput("start_button"),
+                   htmlOutput("df_message")
                    
                )
                
@@ -81,8 +82,8 @@ ui <- dashboardPage(
         
         
         column(width = 8,
-               tableOutput("preview"),
-               tableOutput("test")
+               tableOutput("preview")
+               
         )
     )
     
