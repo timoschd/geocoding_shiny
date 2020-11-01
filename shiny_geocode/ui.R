@@ -5,9 +5,6 @@ library("dashboardthemes")
 library("tidyverse")
 
 
-# load country list once
-data("countryExData")
-countries<- countryExData[, 2]
 
 # Define UI for application 
 ui <- dashboardPage(
@@ -76,15 +73,22 @@ ui <- dashboardPage(
                    uiOutput("start_button"),
                    htmlOutput("df_message")
                    
+               ),
+               box(
+                   width = '100%',
+                   title= "4. Download results",
+                   uiOutput("download_button")
+                   
                )
                
         ),
         
         
         column(width = 8,
+               htmlOutput("data_size"),
                tableOutput("preview"),
                tableOutput("test")
-               
+              
         )
     )
     

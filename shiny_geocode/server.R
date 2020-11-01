@@ -3,11 +3,15 @@ library("shiny")
 library("tidyverse")
 library("readxl")
 library("rworldmap")
-
+library("ggmap")
+library("xlsx")
 
 # load country list once
 data("countryExData")
 countries<- countryExData[, 2]
+
+# add API key
+ggmap::register_google(key= keyring::key_get("google_maps", keyring = "API"))
 
 
 # Define server logic
@@ -21,7 +25,8 @@ server <- function(input, output) {
             
             df <- read.csv(input$file_upload$datapath,
                            header = input$header,
-                           sep = input$sep
+                           sep = input$sep,
+                           colClasses = "character"
             )
             return(df)
         }
@@ -29,7 +34,8 @@ server <- function(input, output) {
         else if (str_detect(input$file_upload$datapath, "\\.xlsx$")){
             
             df <- read_excel(input$file_upload$datapath, 
-                             col_names = input$header
+                             col_names = input$header,
+                             col_types = "character"
             )
             return(df)
         }
@@ -46,40 +52,44 @@ server <- function(input, output) {
         # input$file1 will be NULL initially. After the user selects
         # and uploads a file, head of that data file by default,
         # or all rows if selected, will be shown.
-        
         req(data_file())
-        
         return(head(data_file(),10))
         
-        
-    }, caption= "Data preview")
+    }, caption= "Data preview"
+    )
+    
+    # get size of uploaded data
+    output$data_size <- renderText({
+        req(data_file())
+        return(paste("No of rows: ", nrow(data_file()), "<br>No of columns: ", ncol(data_file())))
+    })
     
     # make Input filter pop up when data was uploaded
     output$address <- renderUI({
         req(data_file())
-        selectInput("address", "Street (+ House Number):", choices= c(" ", names(data_file())), width='40%', selected = " ")
+        selectInput("address", "Street (+ House Number):", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     output$zip <- renderUI({
         req(data_file())
-        selectInput("zip", "ZIP:", choices= c(" ", names(data_file())), width='40%', selected = " ")
+        selectInput("zip", "ZIP:", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     output$city <- renderUI({
         req(data_file())
-        selectInput("city", "City:", choices= c(" ", names(data_file())), width='40%', selected = " ")
+        selectInput("city", "City:", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     output$country <- renderUI({
         req(data_file())
-        selectInput("country", "Country:", choices= c(" ", names(data_file())), width='40%', selected = " ")
+        selectInput("country", "Country:", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     
     output$country_list <- renderUI({
         req(data_file())
-        selectInput("country_list", "OR choose one country from list:", choices= c(" ", countries), width='40%',
-                    selected = " ", selectize = TRUE, multiple= FALSE)
+        selectInput("country_list", "OR choose one country from list:", choices= c("", countries), width='40%',
+                    selected = "", selectize = TRUE, multiple= FALSE)
     })
     
     # render start button
@@ -89,24 +99,24 @@ server <- function(input, output) {
     })
     
     # on button click check consistency
-    check_df_message <- eventReactive(eventExpr = input$start, label="button_observer", valueExpr = {
+    check_df_message <- eventReactive(eventExpr = input$start, label="button_react_addresspaste", valueExpr = {
         req(data_file())
-        if (input$zip == " " & input$city == " "){
+        if (input$zip == "" & input$city == ""){
             "<span style=\"color:red\">Error: City or ZIP column required</span>"
         }
-        else if (input$country == " " & input$country_list == " "){
+        else if (input$country == "" & input$country_list == ""){
             "<span style=\"color:red\">Error: Country column or country from list required</span>"
         }
-        else if (input$address != " " & !is.character(data_file()[[input$address]])) {
+        else if (input$address != "" & !is.character(data_file()[[input$address]])) {
             "<span style=\"color:red\">Error: Street column not in character format</span>"
         }
-        else if (input$zip != " " & !is.character(data_file()[[input$zip]])) {
+        else if (input$zip != "" & !is.character(data_file()[[input$zip]])) {
             "<span style=\"color:red\">Error: ZIP column not in character format</span>"
         }
-        else if (input$city != " " & !is.character(data_file()[[input$city]])) {
+        else if (input$city != "" & !is.character(data_file()[[input$city]])) {
             "<span style=\"color:red\">Error: City column not in character format</span>"
         }
-        else if (input$country != " " & !is.character(data_file()[[input$country]])) {
+        else if (input$country != "" & !is.character(data_file()[[input$country]])) {
             "<span style=\"color:red\">Error: Country column not in character format</span>"
         }
         else {
@@ -121,35 +131,65 @@ server <- function(input, output) {
         return(check_df_message())
     })
     
+
     # if consistent, make complete adress column and geocode it
-    geocoded_data<- eventReactive(input$start, {
+    geocoded_data<- eventReactive(eventExpr = input$start, label="button_react_geocode", ignoreNULL = FALSE, valueExpr ={
         req(check_df_message())
         if (check_df_message() == "<span style=\"color:green\">Geocoding started</span>"){
-            data_file() %>%
-                #mutate(" "= "") %>% 
+          g_data <-  data_file() %>%
+                head(10) %>% #TODO
                 mutate(complete_address = paste0(
-                   (if(input$address != " "){
+                   (if(input$address != ""){
                         paste0(!!sym(input$address), ", " )
                     }),
-                   (if(input$zip != " "){
+                   (if(input$zip != ""){
                        paste0(!!sym(input$zip), " ") 
                    }),
-                   (if(input$city != " "){
+                   (if(input$city != ""){
                        !!sym(input$city)
                    }), ",",
-                   (if(input$country != " "){
+                   (if(input$country != ""){
                        paste0(" ", !!sym(input$country)) 
                    }),
-                   (if(input$country_list != " "){
+                   (if(input$country_list != ""){
                        paste0(" ", input$country_list) 
                    })
-                   
                 ))
+          # geocode addresss to long lat with google maps api
+          gc<- ggmap::geocode(g_data$complete_address) 
+          
+          # bind long lat
+          geocoded_addresses<- bind_cols(head(data_file(), 10), gc) #TODO
+          return(geocoded_addresses)
         }
     })
     # test pasted column
     output$test<- renderTable({
         req(geocoded_data())
-        return(head(geocoded_data()))
+        return(head(geocoded_data(), 10))
+    }, caption = "Results preview")
+    
+    # render download button
+    output$download_button <- renderUI({
+        req(geocoded_data())
+        downloadButton("downloadData", "Download", style= "background-color: #00ffd5")
     })
+    
+    # download df
+    output$downloadData <- downloadHandler(
+        
+        # This function returns a string which tells the client
+        # browser what name to use when saving the file.
+        filename = function() {
+            paste0("geocoded_addresses", ".csv" )
+        },
+        
+        # This function should write data to a file given to it by
+        # the argument 'file'.
+        content = function(file) {
+            
+            # Write to a file specified by the 'file' argument
+            write_excel_csv2(geocoded_data(), file)
+        }
+    )
 }
