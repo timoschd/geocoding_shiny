@@ -5,19 +5,24 @@ library("dashboardthemes")
 library("tidyverse")
 
 
-
 # Define UI for application 
 ui <- dashboardPage(
     header= dashboardHeader(title= "Batch Geocoding",
-                            tags$li(a(href = 'http://shinyapps.company.com',
-                                      icon("github"),
-                                      title = ""),
-                                    class = "dropdown"),
-                            tags$li(a(href = 'http://www.company.com',
-                                      icon("envelope"),
+                            tags$li(a(href = 'mailto:info@timschendzielorz.com?subject="Geocoding App"',
+                                      icon("envelope", "fa-2x"),
                                       title = "Contact",
-                                      style = "padding-top:10px; padding-bottom:10px;"),
-                                    class = "dropdown")
+                                      style = "color: #17677C; margin-top: -4px; padding-left: 4px;" ),
+                                    class = "dropdown"),
+                            tags$li(a(href = 'https://www.github.com/timosch29/geocoding_shiny',
+                                      icon("github", "fa-2x"), # 2x size from f
+                                      title = "GitHub Repo",
+                                      style = "color: #17677C; margin-top: -4px; padding-left: 4px;" ),
+                                    class = "dropdown"),
+                            # Set height of dashboardHeader
+                            tags$li(class = "dropdown",
+                                    tags$style(".navbar {max-height: 40px;}")
+                            )
+                                    
     ),
     
     sidebar= dashboardSidebar(disable = TRUE),
