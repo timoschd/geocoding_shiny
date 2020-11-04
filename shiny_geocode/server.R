@@ -11,7 +11,7 @@ data("countryExData")
 countries<- countryExData[, 2]
 
 # add API key
-ggmap::register_google(key= keyring::key_get("google_maps", keyring = "API"))
+ggmap::register_google(key=Sys.getenv("API_KEY"))
 
 
 # Define server logic

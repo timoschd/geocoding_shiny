@@ -10,3 +10,4 @@ secrets/
 *.xml
 *.xlsx
 .DS_Store
+docker-compose.yml
