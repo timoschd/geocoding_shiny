@@ -35,12 +35,12 @@ RUN rm -rf /var/lib/apt/lists/*
 # make all app files readable, gives rwe permisssion (solves issue when dev in Windows, but building in Ubuntu)
 RUN chmod -R 755 /app
 
-# expose port
-EXPOSE 3838
+# expose port (for local deployment only)
+EXPOSE 3838 
 
 # set non-root
 RUN useradd shiny_user
 USER shiny_user
 
-# run app on container start
-CMD ["R", "-e", "shiny::runApp('/app', host = '0.0.0.0', port = 3838)"]
+# run app on container start (use heroku port variable for deployment)
+CMD ["R", "-e", "shiny::runApp('/app', host = '0.0.0.0', port = $PORT)"]
