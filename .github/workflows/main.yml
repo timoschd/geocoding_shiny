@@ -18,7 +18,7 @@ jobs:
           healthcheck: "https://geocode-shiny.herokuapp.com/"
           usedocker: true
           checkstring: "ok"
-          delay: 30
+          delay: 60
           rollbackonhealthcheckfailed: true
         env:
           HD_API_KEY: ${{secrets.MAPS_API_KEY}} # Docker env must start with HD for Heroku, HD_ will be removed
