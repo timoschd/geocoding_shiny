@@ -16,6 +16,7 @@ jobs:
           heroku_app_name: "geocode-shiny"
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           healthcheck: "https://geocode_shiny.herokuapp.com/health"
+          usedocker: true
           checkstring: "ok"
           delay: 30
         env:
