@@ -1,14 +1,13 @@
 # Base image https://hub.docker.com/u/rocker/
-FROM rocker/shiny-verse:latest
+FROM rocker/shiny-verse:4.0.3
 
 LABEL author="Tim M.Schendzielorz docker@timschendzielorz.com" 
 
-#system libraries of general use
+# system libraries of general use
 # install debian packages
 RUN apt-get update -qq && apt-get -y --no-install-recommends install \
     libxml2-dev \
     libcairo2-dev \
-    libsqlite3-dev \
     libpq-dev \
     libssh2-1-dev \
     libcurl4-openssl-dev \
@@ -34,7 +33,7 @@ RUN Rscript -e 'renv::restore()'
 RUN rm -rf /var/lib/apt/lists/*
 
 # make all app files readable, gives rwe permisssion (solves issue when dev in Windows, but building in Ubuntu)
-RUN chmod -R 755 /shiny_geocode
+RUN chmod -R 755 /app
 
 # expose port
 EXPOSE 3838

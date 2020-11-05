@@ -597,13 +597,6 @@
       "Repository": "CRAN",
       "Hash": "97def703420c8ab10d8f0e6c72101e02"
     },
-    "rJava": {
-      "Package": "rJava",
-      "Version": "0.9-13",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "cfcca6464c6d145e28924800b5bd7f44"
-    },
     "readr": {
       "Package": "readr",
       "Version": "1.4.0",
@@ -862,20 +855,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "a42372606cb76f34da9d090326e9f955"
-    },
-    "xlsx": {
-      "Package": "xlsx",
-      "Version": "0.6.4.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "de18b0753cd6537a486adaca967875c1"
-    },
-    "xlsxjars": {
-      "Package": "xlsxjars",
-      "Version": "0.6.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "4c4b3bc29a916f33f1298dd951133351"
     },
     "xml2": {
       "Package": "xml2",

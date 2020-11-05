@@ -4,7 +4,6 @@ library("tidyverse")
 library("readxl")
 library("rworldmap")
 library("ggmap")
-library("xlsx")
 
 # load country list once
 data("countryExData")
@@ -189,7 +188,7 @@ server <- function(input, output) {
         content = function(file) {
             
             # Write to a file specified by the 'file' argument
-            write_excel_csv2(geocoded_data(), file)
+            write_csv(geocoded_data(), file)
         }
     )
 }
