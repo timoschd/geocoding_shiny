@@ -43,4 +43,4 @@ RUN useradd shiny_user
 USER shiny_user
 
 # run app on container start (use heroku port variable for deployment)
-CMD ["R", "-e", "shiny::runApp('/app', host = '0.0.0.0', port = Sys.getenv('PORT'))"]
+CMD ["R", "-e", "shiny::runApp('/app', host = '0.0.0.0', port = as.numeric(Sys.getenv('PORT')))"]
