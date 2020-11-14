@@ -2,6 +2,7 @@ library("shiny")
 library("shinydashboard")
 library("shinydashboardPlus")
 library("dashboardthemes")
+library("shinyalert")
 library("tidyverse")
 
 
@@ -28,6 +29,7 @@ ui <- dashboardPage(
     sidebar= dashboardSidebar(disable = TRUE),
     
     body= dashboardBody(
+        useShinyalert(),
         shinyDashboardThemes(theme = "blue_gradient"),
         # app title 
         titlePanel("Get longitude & latitude for an address list"),

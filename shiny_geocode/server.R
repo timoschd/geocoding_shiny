@@ -4,6 +4,7 @@ library("tidyverse")
 library("readxl")
 library("rworldmap")
 library("ggmap")
+library("shinyalert")
 
 # load country list once
 data("countryExData")
@@ -63,6 +64,33 @@ server <- function(input, output) {
         return(paste("No of rows: ", nrow(data_file()), "<br>No of columns: ", ncol(data_file())))
     })
     
+    # get size of uploaded data
+    row_number <- reactive({
+        req(data_file())
+        nrow(data_file())
+    })
+    
+    # make shiny alert info box on first data upload only
+    observeEvent(data_file(), once = TRUE, {
+        req(data_file())
+        shinyalert(
+            title = "Welcome",
+            text = paste("Your uploaded dataset has", row_number(), "number of entries. Please note that the number of geocoded addresses is limited per day.<br>Generally, you can not geocode files with more than 1000 addresses.<br>If you wish to geocode more addresses use the contact in the header bar to reach out"),
+            size = "s", 
+            closeOnEsc = TRUE,
+            closeOnClickOutside = TRUE,
+            html = TRUE,
+            type = "info",
+            showConfirmButton = TRUE,
+            showCancelButton = FALSE,
+            confirmButtonText = "OK",
+            confirmButtonCol = "#17677C",
+            timer = 0,
+            imageUrl = "",
+            animation = TRUE
+        )
+    })
+    
     # make Input filter pop up when data was uploaded
     output$address <- renderUI({
         req(data_file())
@@ -118,6 +146,11 @@ server <- function(input, output) {
         else if (input$country != "" & !is.character(data_file()[[input$country]])) {
             "<span style=\"color:red\">Error: Country column not in character format</span>"
         }
+        
+        else if (row_number() > 1000) {
+            "<span style=\"color:red\">Error: More than 1000 address entries can not be geocoded</span>"
+        }
+        
         else {
             "<span style=\"color:green\">Geocoding started</span>"
         }
@@ -136,7 +169,7 @@ server <- function(input, output) {
         req(check_df_message())
         if (check_df_message() == "<span style=\"color:green\">Geocoding started</span>"){
           g_data <-  data_file() %>%
-                head(10) %>% #TODO
+               # head(10) %>% #TODO
                 mutate(complete_address = paste0(
                    (if(input$address != ""){
                         paste0(!!sym(input$address), ", " )
@@ -158,7 +191,7 @@ server <- function(input, output) {
           gc<- ggmap::geocode(g_data$complete_address) 
           
           # bind long lat
-          geocoded_addresses<- bind_cols(head(data_file(), 10), gc) #TODO
+          geocoded_addresses<- bind_cols(data_file(), gc) 
           return(geocoded_addresses)
         }
     })
