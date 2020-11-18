@@ -1,9 +1,6 @@
-library("shiny")
 library("shinydashboard")
 library("shinydashboardPlus")
 library("dashboardthemes")
-library("shinyalert")
-library("tidyverse")
 
 
 # Define UI for application 
@@ -29,7 +26,7 @@ ui <- dashboardPage(
     sidebar= dashboardSidebar(disable = TRUE),
     
     body= dashboardBody(
-        useShinyalert(),
+        shinyalert::useShinyalert(),
         shinyDashboardThemes(theme = "blue_gradient"),
         # app title 
         titlePanel("Get longitude & latitude for an address list"),
@@ -39,6 +36,7 @@ ui <- dashboardPage(
                    box(width = '100%',
                        title="1. Upload your address list as CSV or Excel file",
                        "After uploading specify if the data has a header. If it is a CSV file, specify the separator.", br(),
+                       "Note that for Excel files, all columns need to be in character format", br(),
                        "You can check the data in the preview once uploaded.",
                        
                        br(), br(),
@@ -94,7 +92,7 @@ ui <- dashboardPage(
         column(width = 8,
                htmlOutput("data_size"),
                tableOutput("preview"),
-               tableOutput("test")
+               tableOutput("preview_results")
               
         )
     )
