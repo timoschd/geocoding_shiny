@@ -74,7 +74,7 @@ server <- function(input, output) {
         req(data_file())
         shinyalert(
             title = "Welcome",
-            text = paste("Your uploaded dataset has", row_number(), "number of entries. Please note that the number of geocoded addresses is limited per day.<br>Generally, you can not geocode files with more than 10000 addresses.<br>If you wish to geocode more addresses use the contact in the header bar to reach out"),
+            text = paste("Your uploaded dataset has", row_number(), "entries. Please note that the number of geocoded addresses is limited per day.<br>Generally, you can not geocode files with more than 10000 addresses.<br>If you wish to geocode more addresses use the contact in the header bar to reach out."),
             size = "s", 
             closeOnEsc = TRUE,
             closeOnClickOutside = TRUE,
@@ -93,28 +93,28 @@ server <- function(input, output) {
     # make Input filter pop up when data was uploaded
     output$address <- renderUI({
         req(data_file())
-        selectInput("address", "Street (+ House Number):", choices= c("", names(data_file())), width='40%', selected = "")
+        selectInput("address", "Street (+ House Number)", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     output$zip <- renderUI({
         req(data_file())
-        selectInput("zip", "ZIP:", choices= c("", names(data_file())), width='40%', selected = "")
+        selectInput("zip", "ZIP", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     output$city <- renderUI({
         req(data_file())
-        selectInput("city", "City:", choices= c("", names(data_file())), width='40%', selected = "")
+        selectInput("city", "City", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     output$country <- renderUI({
         req(data_file())
-        selectInput("country", "Country:", choices= c("", names(data_file())), width='40%', selected = "")
+        selectInput("country", "Country", choices= c("", names(data_file())), width='40%', selected = "")
     })
     
     
     output$country_list <- renderUI({
         req(data_file())
-        selectInput("country_list", "OR choose one country from list:", choices= c("", countries), width='40%',
+        selectInput("country_list", "OR choose one country from list", choices= c("", countries), width='40%',
                     selected = "", selectize = TRUE, multiple= FALSE)
     })
     

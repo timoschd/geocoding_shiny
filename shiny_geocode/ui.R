@@ -36,7 +36,7 @@ ui <- dashboardPage(
                    box(width = '100%',
                        title="1. Upload your address list as CSV or Excel file",
                        "After uploading specify if the data has a header. If it is a CSV file, specify the separator.", br(),
-                       "Note that for Excel files, all columns need to be in character format", br(),
+                       "Note that for Excel files, all columns need to be in character format.", br(),
                        "You can check the data in the preview once uploaded.",
                        
                        br(), br(),
@@ -65,7 +65,7 @@ ui <- dashboardPage(
                box(
                    width = '100%',
                    title= "2. Choose the address columns",
-                   "Either city or ZIP is required. A country column or a country choosen from the dropdwon list is required.", br(), br(),
+                   "Either city or ZIP is required. A country column or a country choosen from the dropdown list is required.", br(), br(),
                    uiOutput("address"),
                    uiOutput("zip"),
                    uiOutput("city"),

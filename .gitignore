@@ -3,6 +3,7 @@ secrets/
 .Rproj.user
 .RDataTmp
 .RData
+.Rhistory
 *.RDS
 *.csv
 *.tsv
