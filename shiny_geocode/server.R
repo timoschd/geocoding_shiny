@@ -222,7 +222,7 @@ server <- function(input, output) {
         # This function returns a string which tells the client
         # browser what name to use when saving the file.
         filename = function() {
-            paste0("geocoded_addresses", ".csv" )
+            paste0("geocoded_addresses_", Sys.Date(), ".csv" )
         },
         
         # This function should write data to a file given to it by
